@@ -1,6 +1,6 @@
 # ES6 Basics
 
-The repository demonstrates intricacies.
+The repository demonstrates intricacies of ES6 syntax.
 
 ## Learning Objectives:
 
