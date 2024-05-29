@@ -6,9 +6,6 @@ export default function handleProfileSignup(firstName, lastName, fileName) {
     signUpUser(firstName, lastName),
     uploadPhoto(fileName),
   ])
-    .then((results) => results.map((res) => ({
-      status: res.status,
-      value: res.value,
-    })))
+    .then((results) => results)
     .catch((err) => ({ status: 'rejected', vaule: err }));
 }
