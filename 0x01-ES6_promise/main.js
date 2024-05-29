@@ -1,6 +1,3 @@
-import handleResponseFromAPI from './2-then';
+import handleProfileSignup from './3-all';
 
-const promise = Promise.reject(new Error('oopsy..'));
-handleResponseFromAPI(promise)
-  .then((d) => console.log(d))
-  .catch((err) => console.log(err));
+handleProfileSignup();
