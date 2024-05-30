@@ -1,18 +1,12 @@
-import HolbertonCourse from './2-hbtn_course';
+import Building from './5-building.js';
 
-const c1 = new HolbertonCourse('ES6', 1, ['Bob', 'Jane']);
-console.log(c1.name);
-c1.name = 'Python 101';
-console.log(c1);
+const b = new Building(100);
+console.log(b);
 
-try {
-  c1.name = 12;
-} catch (err) {
-  console.log(err);
-}
+class TestBuilding extends Building {}
 
 try {
-  const c2 = new HolbertonCourse('ES6', '1', ['Bob', 'Jane']);
+  new TestBuilding(200);
 } catch (err) {
   console.log(err);
 }
