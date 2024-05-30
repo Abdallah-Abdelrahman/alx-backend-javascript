@@ -9,7 +9,10 @@ export default class EVCar extends Car {
   get range() { return (this._range); }
 
   cloneCar() {
-    const obj = new Car();
-    return (obj);
+    const parentProto = Object.getPrototypeOf(this);
+    parentProto._brand = undefined;
+    parentProto._motor = undefined;
+    parentProto._color = undefined;
+    return (parentProto);
   }
 }
