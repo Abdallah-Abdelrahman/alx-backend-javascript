@@ -1,3 +1,4 @@
-import createInt8TypedArray from './5-typed_arrays.js';
+import cleanSet from './8-clean_set.js';
 
-console.log(createInt8TypedArray(10, 2, 89));
+console.log(cleanSet(new Set(['bonjovi', 'bonaparte', 'bonappetit', 'banana']), 'bon'));
+console.log(cleanSet(new Set(['bonjovi', 'bonaparte', 'bonappetit', 'banana']), ''));
