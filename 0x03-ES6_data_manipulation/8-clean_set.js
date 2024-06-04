@@ -6,6 +6,7 @@
  * @returns {string} hyphenated string
  */
 export default function cleanSet(set, startString) {
+  if (!(set instanceof Set)) return ('');
   return (
     [...set].reduce((acc, curr) => {
       let ret = acc;
