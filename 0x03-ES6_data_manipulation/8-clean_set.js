@@ -9,7 +9,7 @@ export default function cleanSet(set, startString) {
   if (!(set instanceof Set) || typeof startString !== 'string') return ('');
 
   return (
-    [...set].reduce((acc, curr) => {
+    Array.from(set).reduce((acc, curr) => {
       let ret = acc;
       if (startString && curr.startsWith(startString)) {
         if (ret) ret += '-';
