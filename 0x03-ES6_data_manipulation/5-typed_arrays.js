@@ -12,5 +12,5 @@ export default function createInt8TypedArray(length, position, value) {
   if (position >= length || value < -128 || value > 127) throw new Error('Position outside range');
   int8Array[position] = value;
 
-  return (buffer);
+  return (int8Array);
 }
