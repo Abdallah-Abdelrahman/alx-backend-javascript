@@ -8,15 +8,9 @@
 export default function cleanSet(set, startString) {
   if (!(set instanceof Set) || typeof startString !== 'string') return ('');
 
-  return (
-    Array.from(set).reduce((acc, curr) => {
-      let ret = acc;
-      if (startString && curr.startsWith(startString)) {
-        if (ret) ret += '-';
-        ret += (curr.substring(startString.length));
-        return (ret);
-      }
-      return (ret);
-    }, '')
-  );
+  const ret = [];
+  for (const el of set) {
+    if (startString && el.startsWith(startString)) ret.push(el.substring(startString.length));
+  }
+  return ret.join('-');
 }
