@@ -6,15 +6,12 @@
  * @returns {string} hyphenated string
  */
 export default function cleanSet(set, startString) {
-  if (typeof set !== 'object'
-    || set === null
-    || typeof startString !== 'string'
-    || startString === '') return ('');
+  if (!(set instanceof Set) || typeof startString !== 'string') return ('');
 
   return (
     Array.from(set).reduce((acc, curr) => {
       let ret = acc;
-      if (startString.trim() && curr.startsWith(startString)) {
+      if (startString && typeof curr === 'string' && curr.startsWith(startString)) {
         if (ret) ret += '-';
         ret += (curr.substring(startString.length));
         return (ret);
