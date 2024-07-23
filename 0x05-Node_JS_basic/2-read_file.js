@@ -27,7 +27,7 @@ function countStudents(path) {
   for (const line of lines) {
     if (line && i > 0) {
       const toks = line.split(',');
-      if (!toks[0]) {
+      if (toks.length < 4) {
         // empty line
         continue;
       }
