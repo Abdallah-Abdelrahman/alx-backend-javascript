@@ -18,6 +18,7 @@ function countStudents(path) {
 
   // Split the file content into lines
   const lines = fileContent.trim().split('\n');
+  if (lines.length < 2) throw new Error('Cannot load the database');
 
   if (lines.length <= 1) {
     throw new Error('Cannot load the database');
