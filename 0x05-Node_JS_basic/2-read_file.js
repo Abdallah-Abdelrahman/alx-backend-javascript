@@ -20,10 +20,6 @@ function countStudents(path) {
   const lines = fileContent.trim().split('\n');
   if (lines.length < 2) throw new Error('Cannot load the database');
 
-  if (lines.length <= 1) {
-    throw new Error('Cannot load the database');
-  }
-
   const students = {};
   let totalStudents = 0;
   let i = 0;
@@ -31,17 +27,20 @@ function countStudents(path) {
   // Process each line except the header
   for (let line of lines) {
     line = line.trim();
-    if (line !== '' && i > 0) {
+    if (line && i > 0) {
       const toks = line.split(',');
-      if (toks.length < 4) return;
-      const field = toks[toks.length - 1];
+      if (toks.length < 4) {
+        // eslint-disable-next-line
+        continue;
+      }
+      const major = toks[toks.length - 1];
       const firstname = toks[0];
 
-      if (!students[field]) {
-        students[field] = { count: 0, list: [] };
+      if (!students[major]) {
+        students[major] = { count: 0, list: [] };
       }
-      students[field].count += 1;
-      students[field].list.push(firstname);
+      students[major].count += 1;
+      students[major].list.push(firstname);
       totalStudents += 1;
     }
     i += 1;
@@ -51,11 +50,12 @@ function countStudents(path) {
   buff = `Number of students: ${totalStudents}\n`;
   i = 0;
   const studentsEntries = Object.entries(students);
-  for (const [field, { count, list }] of studentsEntries) {
-    buff += `Number of students in ${field}: ${count}. List: ${list.join(', ')}`;
+  for (const [major, { count, list }] of studentsEntries) {
+    buff += `Number of students in ${major}: ${count}. List: ${list.join(', ')}`;
     if (i < studentsEntries.length - 1) buff += '\n';
     i += 1;
   }
+
   console.log(buff);
 }
 
