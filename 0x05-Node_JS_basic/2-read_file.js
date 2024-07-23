@@ -29,9 +29,9 @@ function countStudents(path) {
   let i = 0;
 
   // Process each line except the header
-  for (const line of lines) {
-    // const line = lines[i].trim();
-    if (line.trim() !== '' && i > 0) {
+  for (let line of lines) {
+    line = line.trim();
+    if (line !== '' && i > 0) {
       const toks = line.split(',');
       const field = toks[toks.length - 1];
       const firstname = toks[0];
@@ -49,10 +49,10 @@ function countStudents(path) {
   // Log the results
   buff = `Number of students: ${totalStudents}\n`;
   i = 0;
-  const studentsMap = Object.entries(students);
-  for (const [field, { count, list }] of studentsMap) {
+  const studentsEntries = Object.entries(students);
+  for (const [field, { count, list }] of studentsEntries) {
     buff += `Number of students in ${field}: ${count}. List: ${list.join(', ')}`;
-    if (i < studentsMap.length - 1) buff += '\n';
+    if (i < studentsEntries.length - 1) buff += '\n';
     i += 1;
   }
   console.log(buff);
