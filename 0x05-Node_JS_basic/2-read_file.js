@@ -52,7 +52,7 @@ function countStudents(path) {
     const studentsMap = Object.entries(students);
     for (const [field, { count, list }] of studentsMap) {
       buff += `Number of students in ${field}: ${count}. List: ${list.join(', ')}`;
-      if (i !== studentsMap.length - 1) buff += '\n';
+      if (i < studentsMap.length - 1) buff += '\n';
       i += 1;
     }
     console.log(buff);
