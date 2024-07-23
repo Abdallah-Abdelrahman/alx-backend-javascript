@@ -33,6 +33,7 @@ function countStudents(path) {
     line = line.trim();
     if (line !== '' && i > 0) {
       const toks = line.split(',');
+      if (toks.length < 4) return;
       const field = toks[toks.length - 1];
       const firstname = toks[0];
 
