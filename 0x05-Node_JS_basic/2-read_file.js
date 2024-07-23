@@ -9,7 +9,7 @@ const fs = require('fs');
 function countStudents(path) {
   let buff = '';
   // Check if the file exists
-  if (!fs.existsSync(path)) {
+  if (!fs.existsSync(path) || !fs.statSync(path).isFile()) {
     throw new Error('Cannot load the database');
   }
 
