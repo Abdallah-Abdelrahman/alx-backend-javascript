@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const fs = require('fs');
 
 /**
@@ -25,12 +24,11 @@ function countStudents(path) {
   let i = 0;
 
   // Process each line except the header
-  for (let line of lines) {
-    line = line.trim();
+  for (const line of lines) {
     if (line && i > 0) {
       const toks = line.split(',');
-      if (toks.length < 4) {
-        // eslint-disable-next-line
+      if (!toks[0]) {
+        // empty line
         continue;
       }
       const major = toks[toks.length - 1];
