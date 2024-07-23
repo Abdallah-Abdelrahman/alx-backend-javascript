@@ -30,7 +30,7 @@ function countStudents(path) {
   // Process each line except the header
   for (const line of lines) {
     // const line = lines[i].trim();
-    if (line !== '' && i > 0) {
+    if (line.trim() !== '' && i > 0) {
       const toks = line.split(',');
       const field = toks[toks.length - 1];
       const firstname = toks[0];
