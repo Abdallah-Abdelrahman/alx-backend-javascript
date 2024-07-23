@@ -48,10 +48,14 @@ function countStudents(path) {
 
     // Log the results
     buff = `Number of students: ${totalStudents}\n`;
-    for (const [field, { count, list }] of Object.entries(students)) {
-      buff += `Number of students in ${field}: ${count}. List: ${list.join(', ')}\n`;
+    i = 0;
+    const studentsMap = Object.entries(students);
+    for (const [field, { count, list }] of studentsMap) {
+      buff += `Number of students in ${field}: ${count}. List: ${list.join(', ')}`;
+      if (i !== studentsMap.length - 1) buff += '\n';
+      i += 1;
     }
-    process.stdout.write(buff);
+    console.log(buff);
   } catch (error) {
     console.error(error.message);
   }
