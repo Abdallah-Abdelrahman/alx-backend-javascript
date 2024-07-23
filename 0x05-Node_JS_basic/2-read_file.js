@@ -31,15 +31,17 @@ function countStudents(path) {
         // empty line
         continue;
       }
-      const major = toks[toks.length - 1];
-      const firstname = toks[0];
+      if (toks.length === 4) {
+        const major = toks[toks.length - 1];
+        const firstname = toks[0];
 
-      if (!students[major]) {
-        students[major] = { count: 0, list: [] };
+        if (!students[major]) {
+          students[major] = { count: 0, list: [] };
+        }
+        students[major].count += 1;
+        students[major].list.push(firstname);
+        totalStudents += 1;
       }
-      students[major].count += 1;
-      students[major].list.push(firstname);
-      totalStudents += 1;
     }
     i += 1;
   }
