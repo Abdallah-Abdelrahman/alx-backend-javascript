@@ -24,13 +24,9 @@ function countStudents(path) {
   let i = 0;
 
   // Process each line except the header
-  for (const line of lines) {
-    if (line && i > 0) {
-      const toks = line.split(',');
-      if (toks.length < 4) {
-        // empty line
-        continue;
-      }
+  lines.forEach((l, i) => {
+    if (i > 0) {
+      const toks = l.split(',');
       if (toks.length === 4) {
         const major = toks[toks.length - 1];
         const firstname = toks[0];
@@ -43,8 +39,7 @@ function countStudents(path) {
         totalStudents += 1;
       }
     }
-    i += 1;
-  }
+  });
 
   // Log the results
   buff = `Number of students: ${totalStudents}\n`;
