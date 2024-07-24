@@ -7,7 +7,6 @@ const fs = require('fs');
  * @param {string} path - path to the database file
  */
 function countStudents(path) {
-  const buff = '';
   // Check if the file exists
   if (!fs.existsSync(path) || !fs.statSync(path).isFile()) {
     throw new Error('Cannot load the database');
