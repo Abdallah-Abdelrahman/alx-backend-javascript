@@ -1,31 +1,112 @@
-#!/usr/bin/env node
+const http = require('http');
+const fs = require('fs').promises;
 
-const { createServer } = require('http');
-const countStudents = require('./3-read_file_async');
+const PORT = 1245;
+const databaseFile = process.argv.length > 2 ? process.argv[2] : '';
 
-const hostname = '127.0.0.1';
-const port = 1245;
+/**
+ * Reads the CSV file and returns student statistics.
+ * @param {string} dataFilePath - The path to the CSV data file.
+ * @returns {Promise<string>} - A promise that resolves to a string with student statistics.
+ */
+const countStudents = (dataFilePath) => new Promise((resolve, reject) => {
+  fs.readFile(dataFilePath, 'utf8')
+    .then((fileContent) => {
+      const lines = fileContent.trim().split('\n');
 
-const app = createServer(async (req, res) => {
-  let resp = 'Hello Holberton School!';
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  if (req.url === '/') {
-    return res.end(resp);
-  }
+      if (lines.length < 2) {
+        reject(new Error('Cannot load the database'));
+        return;
+      }
 
-  resp = 'This is the list of our students';
-  return new Promise((resolve) => {
-    console.log(resp);
-    resolve();
-  })
-    .then(() => {
-      countStudents(process.argv[2]);
+      const [header, ...rows] = lines;
+      const fieldNames = header.split(',');
+      const studentProps = fieldNames.slice(0, -1);
+
+      // Create a map to hold the student groups
+      const studentGroups = rows.reduce((acc, row) => {
+        const studentData = row.split(',');
+        if (studentData.length === fieldNames.length) {
+          const student = Object.fromEntries(
+            studentProps.map((prop, idx) => [prop, studentData[idx]]),
+          );
+          const field = studentData[studentData.length - 1];
+          if (!acc.has(field)) acc.set(field, []);
+          acc.get(field).push(student);
+        }
+        return acc;
+      }, new Map());
+
+      const totalStudents = Array.from(studentGroups.values()).reduce(
+        (sum, students) => sum + students.length,
+        0,
+      );
+
+      // Build the result string
+      let result = `Number of students: ${totalStudents}`;
+      studentGroups.forEach((students, field) => {
+        const studentNames = students
+          .map((student) => student.firstname)
+          .join(', ');
+        result += `\nNumber of students in ${field}: ${students.length}. List: ${studentNames}`;
+      });
+
+      resolve(result);
+    })
+    .catch(() => {
+      reject(new Error('Cannot load the database'));
     });
 });
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+/**
+ * Handles incoming requests to the HTTP server.
+ * @param {http.IncomingMessage} req - The request object.
+ * @param {http.ServerResponse} res - The response object.
+ */
+const requestHandler = (req, res) => {
+  const path = req.url;
+
+  if (path === '/') {
+    const responseText = 'Hello Holberton School!';
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'Content-Length': Buffer.byteLength(responseText),
+    });
+    res.write(Buffer.from(responseText));
+    res.end();
+  } else if (path === '/students') {
+    countStudents(databaseFile)
+      .then((studentData) => {
+        const responseText = `This is the list of our students\n${studentData}`;
+        res.writeHead(200, {
+          'Content-Type': 'text/plain',
+          'Content-Length': Buffer.byteLength(responseText),
+        });
+        res.write(Buffer.from(responseText));
+      })
+      .catch((error) => {
+        const errorMessage = `This is the list of our students\n${error.message}`;
+        res.writeHead(500, {
+          'Content-Type': 'text/plain',
+          'Content-Length': Buffer.byteLength(errorMessage),
+        });
+        res.write(Buffer.from(errorMessage));
+      });
+  } else {
+    const responseText = 'Not Found';
+    res.writeHead(404, {
+      'Content-Type': 'text/plain',
+      'Content-Length': Buffer.byteLength(responseText),
+    });
+    res.write(Buffer.from(responseText));
+    res.end();
+  }
+};
+
+const app = http.createServer(requestHandler);
+
+app.listen(PORT, () => {
+  process.stdout.write(`Server listening at http://localhost:${PORT}\n`);
 });
 
 module.exports = app;
