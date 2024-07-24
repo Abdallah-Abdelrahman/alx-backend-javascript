@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs');
 
 /**
@@ -5,62 +6,52 @@ const fs = require('fs');
  *
  * @param {string} path - path to the database file
  */
-const countStudents = (dataFilePath) => {
-  if (!fs.existsSync(dataFilePath) || !fs.statSync(dataFilePath).isFile()) {
+function countStudents(path) {
+  const buff = '';
+  // Check if the file exists
+  if (!fs.existsSync(path) || !fs.statSync(path).isFile()) {
     throw new Error('Cannot load the database');
   }
 
-  const fileLines = fs.readFileSync(dataFilePath, 'utf8').trim().split('\n');
-  if (fileLines.length < 2) {
-    throw new Error('Cannot load the database');
-  }
+  // Read the file content synchronously
+  const fileContent = fs.readFileSync(path, 'utf8');
 
-  const [header, ...rows] = fileLines;
-  const dbFieldNames = header.split(',');
-  const studentPropsNames = dbFieldNames.slice(0, -1);
+  // Split the file content into lines
+  const lines = fileContent.trim().split('\n');
+  if (lines.length < 2) throw new Error('Cannot load the database');
 
-  const studentGroups = new Map();
-
-  rows.forEach((line) => {
-    const studentRecord = line.trim().split(',');
-
-    if (studentRecord.length < dbFieldNames.length) return;
-
-    // Create an object representing the student
-    const studentObject = Object.fromEntries(
-      studentPropsNames.map((propName, idx) => [propName, studentRecord[idx]]),
-    );
-
-    const field = studentRecord[studentRecord.length - 1];
-
-    if (!studentGroups.has(field)) {
-      studentGroups.set(field, []);
-    }
-
-    // Add the student object to the appropriate array in the fields map
-    studentGroups.get(field).push(studentObject);
-  });
-
-  // The total number of students
-  const totalStudents = Array.from(studentGroups.values()).reduce(
-    (sum, students) => sum + students.length,
-    0,
-  );
-
-  let buff = `Number of students: ${totalStudents}\n`;
+  const students = {};
+  let totalStudents = 0;
   let i = 0;
 
-  studentGroups.forEach((students, field) => {
-    const studentNames = students
-      .map((student) => student.firstname)
-      .join(', ');
+  // Process each line except the header
+  for (let line of lines) {
+    line = line.trim();
+    if (line && i > 0) {
+      const toks = line.split(',');
+      if (toks.length < 4) {
+        // eslint-disable-next-line
+        continue;
+      }
+      const major = toks[toks.length - 1];
+      const firstname = toks[0];
 
-    buff += `Number of students in ${field}: ${students.length}. List: ${studentNames}`;
-    if (i < studentGroups.size - 1) buff += '\n';
+      if (!students[major]) {
+        students[major] = { count: 0, list: [] };
+      }
+      students[major].count += 1;
+      students[major].list.push(firstname);
+      totalStudents += 1;
+    }
     i += 1;
-  });
+  }
 
-  console.log(buff);
-};
+  // Log the results
+  console.log(`Number of students: ${totalStudents}`);
+  const studentsEntries = Object.entries(students);
+  for (const [major, { count, list }] of studentsEntries) {
+    console.log(`Number of students in ${major}: ${count}. List: ${list.join(', ')}`);
+  }
+}
 
 module.exports = countStudents;
