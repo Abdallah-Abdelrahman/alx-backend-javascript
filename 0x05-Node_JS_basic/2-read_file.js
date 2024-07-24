@@ -1,61 +1,41 @@
 const fs = require('fs');
+const readline = require('readline');
 
 /**
  * Attempt to read the database file synchronously
  *
  * @param {string} path - path to the database file
  */
-const countStudents = (dataFilePath) => {
-  if (!fs.existsSync(dataFilePath) || !fs.statSync(dataFilePath).isFile()) {
+const countStudents = (filePath) => {
+  const stream = fs.createReadStream(filePath);
+
+  stream.on('error', () => {
     throw new Error('Cannot load the database');
-  }
-
-  const fileLines = fs.readFileSync(dataFilePath, 'utf8').trim().split('\n');
-  if (fileLines.length < 2) {
-    throw new Error('Cannot load the database');
-  }
-
-  const [header, ...rows] = fileLines;
-  const dbFieldNames = header.split(',');
-  const studentPropsNames = dbFieldNames.slice(0, -1);
-
-  const studentGroups = new Map();
-
-  rows.forEach((line) => {
-    const studentRecord = line.trim().split(',');
-
-    if (studentRecord.length < dbFieldNames.length) return;
-
-    // Create an object representing the student
-    const studentObject = Object.fromEntries(
-      studentPropsNames.map((propName, idx) => [propName, studentRecord[idx]]),
-    );
-
-    const field = studentRecord[studentRecord.length - 1];
-
-    if (!studentGroups.has(field)) {
-      studentGroups.set(field, []);
-    }
-
-    // Add the student object to the appropriate array in the fields map
-    studentGroups.get(field).push(studentObject);
   });
 
-  // The total number of students
-  const totalStudents = Array.from(studentGroups.values()).reduce(
-    (sum, students) => sum + students.length,
-    0,
-  );
+  const rl = readline.createInterface({ input: stream });
+  const stduents = [];
 
-  console.log(`Number of students: ${totalStudents}`);
+  rl.on('line', (row) => {
+    if (row.trim()) {
+      stduents.push(row.split(','));
+    }
+  });
 
-  studentGroups.forEach((students, field) => {
-    const studentNames = students
-      .map((student) => student.firstname)
-      .join(', ');
-    console.log(
-      `Number of students in ${field}: ${students.length}. List: ${studentNames}`,
-    );
+  rl.on('close', () => {
+    const cs = [];
+    const swe = [];
+    for (let i = 1; i < stduents.length; i += 1) {
+      const field = stduents[i];
+      if (field.includes('CS')) {
+        cs.push(field[0]);
+      } else {
+        swe.push(field[0]);
+      }
+    }
+    console.log(`Number of students: ${stduents.length - 1}`);
+    console.log(`Number of students in CS: ${cs.length}. List: ${cs.join(', ')}`);
+    console.log(`Number of students in SWE: ${swe.length}. List: ${swe.join(', ')}`);
   });
 };
 
